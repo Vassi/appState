@@ -108,7 +108,7 @@
 		(function(window, undefined) {
 			module("appState.Stack Tests");
 			
-			test("check exit callbacks are being cleared", 1, function() {								
+			test("Checking for new state", 1, function() {								
 				stateObject.clearExitCallbacks();
 				stateObject.stateExit();
 				equal(counter, 5, "Ensure counter is still 5.");
