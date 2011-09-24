@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>QUnit Test Suite</title>
+	<link rel="stylesheet" href="qunit.css" type="text/css" media="screen">	
+	<script src="qunit.js"></script>  
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+	<script src="../appstate.utils.js"></script>
+	<script src="../appState.StateObject.js"></script>
+	<script src="../appState.Stack.js"></script>	
+</head>
+<body>
+	<h1 id="qunit-header">appState Tests</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup</div>
+	
+	<!-- Tests Begin -->
+	<script type="text/javascript">
+		(function(window, undefined) {
+			module("appState.StateObject Tests");
+			
+			var stateObject = new appState.StateObject("testState");
+			
+			test(".getStateName", 1, function() {
+				equal(stateObject.getStateName(), "testState", "Ensuring state name was saved.");				
+			});
+		}(this));
+	</script>
+</body>
+</html>
