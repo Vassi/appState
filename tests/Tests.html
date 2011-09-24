@@ -24,10 +24,96 @@
 			module("appState.StateObject Tests");
 			
 			var stateObject = new appState.StateObject("testState");
+			var counter = 1;			
+			
+			var incVariable = function() {
+				counter++;
+			}
 			
 			test(".getStateName", 1, function() {
 				equal(stateObject.getStateName(), "testState", "Ensuring state name was saved.");				
 			});
+								
+			test("registerInitCallback", 1, function() {
+				stateObject.registerInitCallback(incVariable);
+				stateObject.stateEnter();
+				
+				equal(counter, 2, "Ensure counter is 2 after callback.");
+			});
+			
+			test("deregisterInitCallback", 1, function() {
+				stateObject.deregisterInitCallback(incVariable);
+				stateObject.stateEnter();
+				
+				equal(counter, 2, "Ensure counter is still 2.");
+			});
+			
+			test("registerExitCallback", 1, function() {
+				stateObject.registerExitCallback(incVariable);
+				stateObject.stateExit();
+				
+				equal(counter, 3, "Ensure counter is 3 after callback.");
+			});
+			
+			test("deregisterExitCallback", 1, function() {
+				stateObject.deregisterExitCallback(incVariable);
+				stateObject.stateExit();
+				
+				equal(counter, 3, "Ensure counter is still 3.");
+			});
+			
+			test("check state is being passed to init callbacks", 1, function() {				
+				stateObject.registerInitCallback(function(state) {
+					equal(state.getStateName(), "testState", "Ensuring state is being passed in.");
+					counter++;
+				});
+				
+				stateObject.stateEnter();
+			});
+			
+			test("check state is being passed to exit callbacks", 1, function() {				
+				stateObject.registerExitCallback(function(state) {
+					equal(state.getStateName(), "testState", "Ensuring state is being passed in.");
+					counter++;
+				});
+				
+				stateObject.stateExit();
+			});
+						
+			test("check init callbacks are being cleared", 1, function() {								
+				stateObject.clearInitCallbacks();
+				stateObject.stateEnter();
+				equal(counter, 5, "Ensure counter is still 5.");
+				//Note our previous test functions should be incrementing counter when run
+				//if they're still in the queue.
+			});
+			
+			
+			test("check exit callbacks are being cleared", 1, function() {								
+				stateObject.clearExitCallbacks();
+				stateObject.stateExit();
+				equal(counter, 5, "Ensure counter is still 5.");
+			});
+			
+			test("check data being passed to init callback", 1, function() {
+				stateObject.registerInitCallback(function(state, data) {
+					equal(data.number, 5, "Ensure data.number is 5");
+				});
+				
+				stateObject.stateEnter({ number: 5});
+			});
+			//Still need data tests.
+		}(this));
+		
+		(function(window, undefined) {
+			module("appState.Stack Tests");
+			
+			test("check exit callbacks are being cleared", 1, function() {								
+				stateObject.clearExitCallbacks();
+				stateObject.stateExit();
+				equal(counter, 5, "Ensure counter is still 5.");
+			});
+			
 		}(this));
 	</script>
 </body>

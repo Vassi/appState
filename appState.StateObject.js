@@ -34,7 +34,7 @@
 		//Called by State Monitor when the state is exited.
 		//This can be called whether the change was graceful or not!
 		this.stateExit = function() {
-		    appState.utils.invokeQueue(exitQueue);
+		    invokeQueue(exitQueue);
 		};
 		
 		this.registerInitCallback = function(callback) {
@@ -51,6 +51,14 @@
 		
 		this.deregisterExitCallback = function(callback) {
 		    appState.utils.deregisterCallback(exitQueue, callback);
+		};
+		
+		this.clearInitCallbacks = function() {
+			initQueue.splice(0, initQueue.length);
+		};
+		
+		this.clearExitCallbacks = function() {
+			exitQueue.splice(0, exitQueue.length);
 		};
 				
 	};
