@@ -108,10 +108,84 @@
 		(function(window, undefined) {
 			module("appState.Stack Tests");
 			
-			test("Checking for new state", 1, function() {								
-				stateObject.clearExitCallbacks();
-				stateObject.stateExit();
-				equal(counter, 5, "Ensure counter is still 5.");
+			var startState = new appState.StateObject("start");
+			var playState = new appState.StateObject("play");
+			var pauseState = new appState.StateObject("pause");
+			var endState = new appState.StateObject("end");
+						
+			
+			test("Checking assignment of pushState and init callback.", 3, function() {		
+				var initVar = "";
+				var stack = new appState.Stack(function(state, data) {
+					initVar = state.getStateName();
+				});
+				
+				stack.pushState(startState);
+				equal(initVar, startState.getStateName(), "Should equal state name.");
+				equal(stack.currentState().getStateName(), startState.getStateName(), "Should equal state name.");
+				strictEqual(stack.currentState(), startState, "Should equal same object.");
+			});
+			
+			test("Checking assignment of popState and exit callback.", 2, function(){
+				var exitVar = "";
+				var stack = new appState.Stack(undefined, function(state, data) {
+					exitVar = state.getStateName();
+				});
+				
+				stack.pushState(startState);
+				stack.popState();
+				equal(exitVar, startState.getStateName(), "Should equal state name.");
+				strictEqual(stack.currentState(), undefined, "Should be undefined now.");
+			});
+			
+			test("Ensure optional data is being passed.", 1, function(){
+				var exitVar = "";
+				var stack = new appState.Stack(function(state, data) {
+					exitVar = data.number;
+				});
+				
+				stack.pushState(startState, { number: 4});				
+				equal(exitVar, 4, "Should equal 4.");				
+			});
+			
+			test("Ensure stacking functions as expected.", 10, function() {
+				var stack = new appState.Stack();
+				stack.pushState(startState);
+				
+				stack.pushState(playState);
+				equal(stack.currentState().getStateName(), "play", "start -> Push play");
+				
+				stack.pushState(pauseState);
+				equal(stack.currentState().getStateName(), "pause", "push -> pause");
+				
+				stack.popState();
+				equal(stack.currentState().getStateName(), "play", "pop(pause) -> play");
+				
+				stack.popState();
+				equal(stack.currentState().getStateName(), "start", "pop(play) -> start");
+				
+				stack.pushState(pauseState);
+				equal(stack.currentState().getStateName(), "pause", "push(pause) -> pause");
+				
+				stack.swapState(playState);
+				equal(stack.currentState().getStateName(), "play", "swap pause with play");
+				
+				stack.popState();
+				equal(stack.currentState().getStateName(), "start", "pop play -> start");
+				
+				stack.pushState(playState);
+				stack.pushState(pauseState);
+				
+				stack.reset(endState);
+				equal(stack.currentState().getStateName(), "end", "push play, pause, reset end");
+				
+				stack.popState();
+				equal(stack.currentState(), undefined, "pop end, should be empty");
+				
+				stack.pushState(playState);
+				stack.pushState(pauseState);
+				stack.clear();
+				equal(stack.currentState(), undefined, "add play, pause, then clear, should be empty.");
 			});
 			
 		}(this));

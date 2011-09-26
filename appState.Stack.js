@@ -27,7 +27,7 @@
             ///<returns>appState.StateObject</returns>
 
             if (stateStack.length > 0) {
-                return stateStack[stateStack.length];
+                return stateStack[stateStack.length - 1];
             }
 
             return undefined;
@@ -52,8 +52,8 @@
             if (currentHandler) {
                 if (initCallback) {
                     initCallback(currentHandler, data);
-                }
-                state.stateEnter(currentHandler, data);
+                }				
+                currentHandler.stateEnter(currentHandler, data);
             }
         }
 
@@ -101,6 +101,7 @@
             ///<summary>Exits the current top state and enters the next state on the stack, if present.</summary>
 
             exitCurrentState();
+			stateStack.pop();
             enterCurrentState();
         }
 
